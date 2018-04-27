@@ -80,6 +80,12 @@ keyb_shortcuts = ["<Super>1", "<Super>2", "<Super>3", "<Super>4", "<Super>5",
                   "<Super><Alt>1", "<Super><Alt>2", "<Super><Alt>3", "<Super><Alt>4", "<Super><Alt>5",
                   "<Super><Alt>6", "<Super><Alt>7", "<Super><Alt>8", "<Super><Alt>9", "<Super><Alt>0"]
 
+# the shift keyboard shortcuts will launch the app no matter what
+shift_keyb_shortcuts = ["<Shift><Super>1", "<Shift><Super>2", "<Shift><Super>3", "<Shift><Super>4", "<Shift><Super>5",
+                  "<Shift><Super>6", "<Shift><Super>7", "<Shift><Super>8", "<Shift><Super>9", "<Shift><Super>0",
+                  "<Shift><Super><Alt>1", "<Shift><Super><Alt>2", "<Shift><Super><Alt>3", "<Shift><Super><Alt>4", "<Shift><Super><Alt>5",
+                  "<Shift><Super><Alt>6", "<Shift><Super><Alt>7", "<Shift><Super><Alt>8", "<Shift><Super><Alt>9", "<Shift><Super><Alt>0"]
+
 
 def applet_button_press(widget, event, the_dock):
     """Button press event for the applet
@@ -530,6 +536,14 @@ def applet_drag_motion(widget, context, x, y, time, the_dock):
 
     return True
 
+def applet_shift_shortcut_handler(keybinder, the_dock):
+    if keybinder.current_shortcut in keybinder.shortcuts:
+        app_no = keybinder.shortcuts.index(keybinder.current_shortcut)
+
+    app = the_dock.get_app_by_pos(app_no)
+    if app is not None:
+        app.start_app()
+
 
 def applet_shortcut_handler(keybinder, the_dock):
     """ Handler for global keyboard shortcut presses
@@ -645,6 +659,12 @@ def applet_fill(applet):
         keybinder.grab(shortcut)
     keybinder.connect("activate", applet_shortcut_handler, the_dock)
     keybinder.start()
+
+    shift_keybinder = GlobalKeyBinding()
+    for shortcut in shift_keyb_shortcuts:
+        shift_keybinder.grab(shortcut)
+    shift_keybinder.connect("activate", applet_shift_shortcut_handler, the_dock)
+    shift_keybinder.start()
 
     applet.set_background_widget(applet)  # hack for panel transparency
 
